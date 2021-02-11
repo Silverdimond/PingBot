@@ -1,0 +1,53 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install 7Zip PowerShell Module
+      shell: powershell
+      run: Install-Module 7Zip4PowerShell -Force -Verbose
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release
+    - name: Zip 
+      shell: powershell
+      run: Compress-7Zip "PingBot\bin\Release\net5.0" -ArchiveFileName "pingbot.zip" -Format Zip
+    - name: Make a random name
+      id: E
+      shell: powershell
+      run: |
+          $e =Get-Random
+          echo "::set-output name=Random::$e"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+         tag_name: ${{ steps.E.outputs.Random }}
+         release_name: ${{ steps.E.outputs.Random }}
+         body: Automated release, a release will be created for every single push on the master branch. this one is for ${{ github.sha }}
+         draft: true
+         prerelease: true
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+         upload_url: ${{ steps.create_release.outputs.upload_url }}
+         asset_path: ./pingbot.zip
+         asset_name: pingbot.zip
+         asset_content_type: application/zip
