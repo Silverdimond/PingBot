@@ -24,8 +24,7 @@ namespace PingBot
             discord = new DiscordClient(new DiscordConfiguration()
             {
                 Token = config.Token,
-                TokenType = TokenType.Bot,
-                Intents = DiscordIntents.All
+                TokenType = TokenType.Bot
             });
 
             CommandsNextExtension commands = discord.UseCommandsNext(new CommandsNextConfiguration()
