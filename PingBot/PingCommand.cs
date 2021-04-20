@@ -8,6 +8,6 @@ namespace PingBot
     internal class PingCommand : BaseCommandModule
     {
         [Command("ping")]
-        public async Task Ping(CommandContext ctx) => await new DiscordMessageBuilder().WithReply(ctx.Message.Id).WithContent($"🏓 Pong! {ctx.Client.Ping}ms suck on that python").SendAsync(ctx.Channel);
+        public async Task Ping(CommandContext ctx) => await new DiscordMessageBuilder().WithReply(ctx.Message.Id).WithContent($"🏓 Pong! {ctx.Client.Ping}ms").SendAsync(ctx.Channel);
     }
 }
